@@ -11,7 +11,7 @@ from langchain_community.vectorstores import FAISS                       # Moved
 
 # --- CORE LANGCHAIN IMPORTS (STAY THE SAME) ---
 
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 
 # Load env
@@ -94,6 +94,7 @@ def ask_bot(query):
         return "I don't know. Please wait for the Human reply."
 
     return answer
+
 
 
 
