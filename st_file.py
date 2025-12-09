@@ -1,13 +1,7 @@
 import streamlit as st
 from rag_file import ask_bot
 from PIL import Image
-
-# st.set_page_config(page_title="L&H FAQ BOT", page_icon="💬", layout="centered")
-
-# Load Logo
 logo = Image.open("l&h_logo.png")
-
-# Center logo + title
 col1, col2, col3 = st.columns([1,2,1])
 with col1:
     st.write("")
@@ -22,7 +16,6 @@ with col3:
 
 st.write("Ask any question from the L&H FAQ knowledge base.")
 
-# No session_state → just a simple input
 user_input = st.text_input("Type your question:")
 
 if user_input:
@@ -32,4 +25,5 @@ if user_input:
         bot_reply = ask_bot(user_input)
 
     st.markdown(f"**Bot:** {bot_reply}")
+
 
