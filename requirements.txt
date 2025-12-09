@@ -11,3 +11,4 @@ streamlit
 langchain-community  
 langchain-core
 langchain-classic
+msoffcrypto-tool
