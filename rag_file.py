@@ -10,8 +10,7 @@ from langchain_community.vectorstores import FAISS
 
 # --- CORE/EXPRESSION LANGUAGE IMPORTS ---
 from langchain_core.prompts import PromptTemplate # Fixed
-from langchain.chains import RetrievalQA
-# Load env
+from langchain_classic.chains import RetrievalQA
 load_dotenv()
 gemini_key = os.getenv("gemini_key")
 
@@ -91,6 +90,7 @@ def ask_bot(query):
         return "I don't know. Please wait for the Human reply."
 
     return answer
+
 
 
 
