@@ -5,7 +5,7 @@ from PIL import Image
 # st.set_page_config(page_title="L&H FAQ BOT", page_icon="💬", layout="centered")
 
 # Load Logo
-logo = Image.open("FAQ Bot/l&h_logo.png")
+logo = Image.open("l&h_logo.png")
 
 # Center logo + title
 col1, col2, col3 = st.columns([1,2,1])
@@ -32,3 +32,4 @@ if user_input:
         bot_reply = ask_bot(user_input)
 
     st.markdown(f"**Bot:** {bot_reply}")
+
