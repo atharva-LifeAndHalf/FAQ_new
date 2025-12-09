@@ -1,0 +1,11 @@
+Flask
+langchain
+langchain-google-genai
+faiss-cpu
+python-dotenv
+unstructured
+openpyxl
+sentence-transformers
+huggingface-hub
+streamlit
+langchain-community  
