@@ -21,7 +21,7 @@ llm = ChatGoogleGenerativeAI(
 )
 
 # --------------- LOAD DATA ----------------
-loader = UnstructuredExcelLoader("C://Users//ss//OneDrive//Desktop//LandH//FAQ Bot//FAQ_file.xlsx")
+loader = UnstructuredExcelLoader("FAQ_file.xlsx")
 data = loader.load()
 texts = [doc.page_content for doc in data]
 
@@ -90,6 +90,7 @@ def ask_bot(query):
         return "I don't know. Please wait for the Human reply."
 
     return answer
+
 
 
 
