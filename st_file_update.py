@@ -1,69 +1,104 @@
 import streamlit as st
 from rag_file import ask_bot
 from PIL import Image
-import time
 
-# ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="L&H FAQ BOT", page_icon="💬", layout="centered")
+# --- 1. CONFIGURATION AND INITIAL SETUP ---
+# Set page configuration for a clean, wide layout
+st.set_page_config(
+    page_title="L&H FAQ BOT",
+    page_icon="💬",
+    layout="wide" 
+)
 
-# ---------------- LOGO ----------------
-logo = Image.open("C://Users//ss//OneDrive//Desktop//LandH//FAQ Bot//l&h_logo.png")
-col1, col2, col3 = st.columns([1,2,1])
-with col1: st.write("")
-with col2: st.image(logo, width=140)
-with col3: st.write("")
+# Load Logo (Assuming "FAQ Bot/l&h_logo.png" is the correct path)
+try:
+    # Use the logo in the sidebar for a ChatGPT-like feel
+    logo = Image.open("l&h_logo.png")
+except FileNotFoundError:
+    logo = None
 
-st.markdown("### Ask any question from the L&H FAQ knowledge base.")
+# Initialize chat history in session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# ---------------- SESSION STATE ----------------
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+# --- 2. SIDEBAR (History and New Chat) ---
+with st.sidebar:
+    # Mimic the dark/minimalist look (often best achieved with st.set_page_config(theme='dark'))
+    
+    # New Chat Button at the top
+    if st.button("➕ New Chat", use_container_width=True, help="Start a new conversation"):
+        st.session_state.messages = []
+        st.rerun()
 
-if "last_interaction" not in st.session_state:
-    st.session_state.last_interaction = time.time()
+    st.markdown("---") # Separator line
+    
+    # Display simplified chat history
+    if st.session_state.messages:
+        st.subheader("Previous Conversations")
+        
+        # We'll display unique conversation starters only
+        conversation_titles = [m["content"][:40] + "..." for m in st.session_state.messages if m["role"] == "user"]
+        
+        # Display unique titles for history
+        unique_titles = []
+        for title in conversation_titles:
+            if title not in unique_titles:
+                unique_titles.append(title)
+                st.caption(title) 
 
-if "chat_ended" not in st.session_state:
-    st.session_state.chat_ended = False
+    # --- 3. CONTACT INFO (Placed at the bottom of the sidebar for a clean look) ---
+    st.markdown("---")
+    st.subheader("Contact Info")
+    st.markdown(
+        """
+        - **Email:** support@landh.com
+        - **Phone:** (555) 123-4567
+        """
+    )
+    # Optional: Add the logo at the very bottom if desired
+    if logo:
+        st.image(logo, width=50)
 
-# ---------------- SIDEBAR ----------------
-st.sidebar.title("Chat History")
-for chat in st.session_state.chat_history:
-    role = "You" if chat["role"] == "user" else "Bot"
-    st.sidebar.write(f"**{role}:** {chat['message']}")
 
-# ---------------- CONTACT BUTTON ----------------
-if st.sidebar.button("Contact Support"):
-    st.sidebar.info("📧 Contact us at **support@landh.com**")
+# --- 4. MAIN INTERFACE: TITLE AND CHAT DISPLAY ---
 
-# ---------------- IDLE TIMEOUT CHECK ----------------
-if not st.session_state.chat_ended and time.time() - st.session_state.last_interaction > 30:
-    st.warning("⏰ Chat ended due to inactivity.")
-    st.session_state.chat_history.append({
-        "role": "bot",
-        "message": "Chat ended due to inactivity. You can refresh to start a new session."
-    })
-    st.session_state.chat_ended = True
+# Keep the header minimal, centered title is often a good look
+st.markdown(
+    "<h1 style='text-align: center; margin-top: -50px;'>L&H FAQ BOT</h1>", 
+    unsafe_allow_html=True
+)
 
-# ---------------- DISPLAY CHAT ----------------
-for chat in st.session_state.chat_history:
-    if chat["role"] == "user":
-        st.markdown(f"**You:** {chat['message']}")
-    else:
-        st.markdown(f"**Bot:** {chat['message']}")
+# Display a brief prompt/instruction
+st.markdown(
+    "<p style='text-align: center; color: gray;'>Ask any question from the L&H FAQ knowledge base.</p>", 
+    unsafe_allow_html=True
+)
+st.markdown("<br>", unsafe_allow_html=True) # Spacer
 
-# ---------------- USER INPUT ----------------
-if not st.session_state.chat_ended:
-    user_input = st.text_input("Type your question here:", key="user_input")
+# Display conversation history
+for message in st.session_state.messages:
+    # The default st.chat_message already provides the visual distinction
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    if user_input:
-        st.session_state.last_interaction = time.time()  # reset timer
-        st.session_state.chat_history.append({"role": "user", "message": user_input})
+# --- 5. CHAT INPUT AND RAG PROCESSING ---
 
-        # GREETING
-        if user_input.lower().strip() in ["hi", "hello", "hii", "hey"]:
-            bot_reply = "Hello! 👋 How can I assist you today?"
-        else:
-            bot_reply = ask_bot(user_input)
+# Create the input box at the bottom
+if prompt := st.chat_input("Message L&H FAQ BOT..."):
+    
+    # 1. Store and display User message
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-        st.session_state.chat_history.append({"role": "bot", "message": bot_reply})
-        st.experimental_rerun()
+    # 2. Get Bot response
+    with st.chat_message("assistant"):
+        with st.spinner("Processing your query..."):
+            # Call the RAG function from rag_file
+            bot_response = ask_bot(prompt)
+        
+        # Display Bot response
+        st.markdown(bot_response)
+        
+    # 3. Store Bot message
+    st.session_state.messages.append({"role": "assistant", "content": bot_response})
