@@ -2,9 +2,15 @@
 import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.document_loaders import UnstructuredExcelLoader
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+
+# --- UPDATED IMPORTS TO langchain_community ---
+
+from langchain_community.document_loaders import UnstructuredExcelLoader # Moved
+from langchain_community.embeddings import HuggingFaceEmbeddings         # Moved
+from langchain_community.vectorstores import FAISS                       # Moved
+
+# --- CORE LANGCHAIN IMPORTS (STAY THE SAME) ---
+
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 
@@ -88,5 +94,6 @@ def ask_bot(query):
         return "I don't know. Please wait for the Human reply."
 
     return answer
+
 
 
